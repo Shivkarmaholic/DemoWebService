@@ -4,11 +4,22 @@ using System.Linq;
 using System.Web;
 using System.Web.Services;
 using System.Data;
+using System.Web.Script.Serialization;
 
 [WebService(Namespace = "http://tempuri.org/")]
 [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
 // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
 // [System.Web.Script.Services.ScriptService]
+
+public class employee
+{
+    //public int eid { get; set; }
+    public string ename { get; set; }
+    public int esalary { get; set; }
+    public int edeptid { get; set; }
+    public DateTime ejoindate { get; set; }
+    
+}
 
 public class Service : System.Web.Services.WebService
 {
@@ -26,9 +37,49 @@ public class Service : System.Web.Services.WebService
     }
 
 
-    
+    [System.Web.Services.WebMethod]
+    public string insertbulinsertjsondata(string data)
+    {
+        string response = "", response1="";
 
-        [System.Web.Services.WebMethod]
+        JavaScriptSerializer js=new JavaScriptSerializer();
+        List<employee> emplist = js.Deserialize<List<employee>>(data).ToList();
+        DataSet ds = new DataSet();
+        try
+        {
+            WebCall wc = new WebCall();
+
+            DataTable dt_employee = JsonConverterClass.ToDataTable(emplist);
+
+            ds = wc.insertbulinsertjsondata(dt_employee);
+
+
+            if (ds.Tables.Count > 0)
+            {
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    // response2 = "\"data\":\"" + "0" + "\"";
+                    response1 = JsonConverterClass.GetJsonWithBlank(ds.Tables[0], "data");
+                    response = "{" + response1 + "}";
+                    return response;
+                }
+                else
+                {
+                    return "";
+                }
+            }
+            return response;
+
+        }
+        catch (Exception e)
+        {
+            return "";
+        }
+
+    }
+
+
+    [System.Web.Services.WebMethod]
     public string getDetails(int id,string name, int price,char ch)
     {
         string response = "", response1 = "";

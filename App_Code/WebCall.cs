@@ -20,6 +20,27 @@ public class WebCall
 	}
     string connectionStr = "server=DESKTOP-SQKJ3UE\\SQLEXPRESS;database=demodb;Integrated Security=true;";
 
+
+    internal DataSet insertbulinsertjsondata(DataTable dt)
+    {
+        DataSet ds = new DataSet();
+        using (SqlConnection con = new SqlConnection(connectionStr))
+        {
+
+            using (SqlCommand cmd = new SqlCommand("insertbulkjsonemployee", con))
+            {
+
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("emp", dt );
+                using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                {
+                    sda.Fill(ds);
+                }
+            }
+        }
+        return ds;
+    }
+
     internal DataSet getDetails(int id,string name, int price,char ch)
     {
         DataSet ds = new DataSet();
